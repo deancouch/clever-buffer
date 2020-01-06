@@ -351,17 +351,9 @@ describe('CleverBufferWriter', () => {
     cleverBuffer.getOffset().should.eql(9);
   });
 
-  it('does nothing silently when writing past the length', () => {
-    const buf = Buffer.from([0x0]);
-    const cleverBuffer = new CleverBufferWriter(buf, { noAssert: true });
-    cleverBuffer.writeUInt8(1);
-    cleverBuffer.writeUInt8(1);
-    buf.should.eql(Buffer.from([0x1]));
-  });
-
-  it('throws an exception when writing past the length with noAssert off', () => {
+  it('throws an exception when writing past the length', () => {
     const buf = Buffer.from([0x1]);
-    const cleverBuffer = new CleverBufferWriter(buf, { noAssert: false });
+    const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt8(1);
     ((() => cleverBuffer.writeUInt8(1))).should.throw();
   });
@@ -375,8 +367,8 @@ describe('CleverBufferWriter', () => {
     const buf1 = Buffer.alloc(size);
     const buf2 = Buffer.alloc(size);
 
-    const cleverBuffer1 = new CleverBufferWriter(buf1, { bigEndian, noAssert: false });
-    const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian, noAssert: false });
+    const cleverBuffer1 = new CleverBufferWriter(buf1, { bigEndian });
+    const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian });
 
     if (unsigned) {
       f = `writeUInt${size*8}`;
@@ -400,8 +392,8 @@ describe('CleverBufferWriter', () => {
     const buf1 = Buffer.alloc(size);
     const buf2 = Buffer.alloc(size);
 
-    const cleverBuffer1 = new CleverBufferWriter(buf1, { bigEndian, noAssert: false });
-    const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian, noAssert: false });
+    const cleverBuffer1 = new CleverBufferWriter(buf1, { bigEndian });
+    const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian });
 
     if (unsigned) {
       f = `writeUInt${size*8}`;
@@ -416,13 +408,13 @@ describe('CleverBufferWriter', () => {
     buf1.should.eql(buf2);
   }))));
 
-  describe('check only throwing exception for writing negative unsigned integers when noAssert:false', () => specHelper.cartesianProduct({
+  describe('check only throwing exception for writing negative unsigned integers', () => specHelper.cartesianProduct({
     size:      [1, 2, 4, 8],
     bigEndian: [false, true]
   }).map((testCase) => ({ size, bigEndian }) => {
-    it(`should throw for noAssert:false ${JSON.stringify(testCase)}`, () => {
+    it(`should throw for ${JSON.stringify(testCase)}`, () => {
       let error;
-      const cleverBuffer = new CleverBufferWriter((Buffer.alloc(size)), { bigEndian, noAssert: false });
+      const cleverBuffer = new CleverBufferWriter((Buffer.alloc(size)), { bigEndian });
 
       try {
         cleverBuffer[`writeUInt${size*8}`]("-1");
@@ -436,13 +428,6 @@ describe('CleverBufferWriter', () => {
         error = error2;
         error.toString().should.match(/TypeError|RangeError/);
       }
-    });
-
-    it(`should not throw for noAssert:true ${JSON.stringify(testCase)}`, () => {
-      const buf = Buffer.alloc(size);
-      const cleverBuffer = new CleverBufferWriter(buf, { bigEndian, noAssert: true });
-      ((() => cleverBuffer[`writeUInt${size*8}`]("-1"))).should.not.throw();
-      ((() => cleverBuffer[`writeUInt${size*8}`](-1))).should.not.throw();
     });
   }));
 });

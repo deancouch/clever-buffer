@@ -13,9 +13,8 @@ class CleverBuffer {
     this.slice = this.slice.bind(this);
     this.buffer = buffer;
 
-    ({ offset: this.offset, noAssert: this.noAssert, bigEndian: this.bigEndian } = defaults(options, {
+    ({ offset: this.offset, bigEndian: this.bigEndian } = defaults(options, {
       offset: 0,
-      noAssert: true,
       bigEndian: false
     }
     ));
@@ -24,9 +23,9 @@ class CleverBuffer {
   _executeAndIncrement(bigEndianFunction, littleEndianFunction, value, _offset) {
     let val;
     if (this.bigEndian) {
-      val = bigEndianFunction(_offset != null ? _offset : this.offset, this.noAssert);
+      val = bigEndianFunction(_offset != null ? _offset : this.offset);
     } else {      
-      val = littleEndianFunction(_offset != null ? _offset : this.offset, this.noAssert);
+      val = littleEndianFunction(_offset != null ? _offset : this.offset);
     }
     if (_offset === undefined) { this.offset += value; }
     return val;

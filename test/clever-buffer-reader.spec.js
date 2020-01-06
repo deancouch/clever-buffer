@@ -180,13 +180,6 @@ describe('CleverBufferReader', () => {
     (() => cleverBuffer.getUInt8().should.throw());
   });
 
-  it('when noAssert is true: should return <undefined> when reading past the length', () => {
-    buf = Buffer.from([0x1]);
-    const cleverBuffer = new CleverBufferReader(buf, { noAssert: true });
-    should.equal(cleverBuffer.getUInt8(), 1);
-    should.equal(typeof cleverBuffer.getUInt8(), 'undefined');
-  });
-
   const testCases = specHelper.cartesianProduct({
     size: [1, 2, 4, 8],
     unsigned: [false, true],
@@ -196,21 +189,11 @@ describe('CleverBufferReader', () => {
 
   testCases.map(testCase => (({
     size, unsigned, bigEndian, offset,
-  }) => it(`when noAssert is false: should throw RangeError when reading past the length for ${JSON.stringify(testCase)}`, () => {
+  }) => it(`should throw RangeError when reading past the length for ${JSON.stringify(testCase)}`, () => {
     buf = Buffer.alloc(((offset || 0) + size) - 1);
-    const cleverBuffer = new CleverBufferReader(buf, { bigEndian, noAssert: false });
+    const cleverBuffer = new CleverBufferReader(buf, { bigEndian });
     const f = unsigned ? `getUInt${size * 8}` : `getInt${size * 8}`;
     (() => cleverBuffer[f](offset)).should.throw(RangeError);
-  })
-  )(testCase));
-
-  testCases.map(testCase => (({
-    size, unsigned, bigEndian, offset,
-  }) => it(`when noAssert is true: should not throw RangeError when reading past the length for ${JSON.stringify(testCase)}`, () => {
-    buf = Buffer.alloc(((offset || 0) + size) - 1);
-    const cleverBuffer = new CleverBufferReader(buf, { bigEndian, noAssert: true });
-    const f = unsigned ? `getUInt${size * 8}` : `getInt${size * 8}`;
-    (() => cleverBuffer[f](offset)).should.not.throw();
   })
   )(testCase));
 });

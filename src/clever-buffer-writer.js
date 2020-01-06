@@ -18,189 +18,50 @@ class CleverBufferWriter extends CleverBuffer {
     super(buffer, options);
   }
 
-// START NODE 8 LEGACY BUFFER FUNCTIONS
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-  legacyWriteUInt8(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 1, 0xff, 0);
-    }
-    this.buffer[offset] = value;
-    return offset + 1;
-  }
-
-  legacyWriteUInt16LE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 2, 0xffff, 0);
-    }
-    this.buffer[offset] = value;
-    this.buffer[offset + 1] = value >>> 8;
-    return offset + 2;
-  }
-
-  legacyWriteUInt16BE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 2, 0xffff, 0);
-    }
-    this.buffer[offset] = value >>> 8;
-    this.buffer[offset + 1] = value;
-    return offset + 2;
-  }
-
-  legacyWriteUInt32LE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 4, 0xffffffff, 0);
-    }
-    this.buffer[offset + 3] = value >>> 24;
-    this.buffer[offset + 2] = value >>> 16;
-    this.buffer[offset + 1] = value >>> 8;
-    this.buffer[offset] = value;
-    return offset + 4;
-  }
-
-  legacyWriteUInt32BE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 4, 0xffffffff, 0);
-    }
-    this.buffer[offset] = value >>> 24;
-    this.buffer[offset + 1] = value >>> 16;
-    this.buffer[offset + 2] = value >>> 8;
-    this.buffer[offset + 3] = value;
-    return offset + 4;
-  }
-
-  legacyWriteInt8(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 1, 0x7f, -0x80);
-    }
-    this.buffer[offset] = value;
-    return offset + 1;
-  }
-
-  legacyWriteInt16LE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 2, 0x7fff, -0x8000);
-    }
-    this.buffer[offset] = value;
-    this.buffer[offset + 1] = value >>> 8;
-    return offset + 2;
-  }
-
-  legacyWriteInt16BE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 2, 0x7fff, -0x8000);
-    }
-    this.buffer[offset] = value >>> 8;
-    this.buffer[offset + 1] = value;
-    return offset + 2;
-  }
-
-  legacyWriteInt32LE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 4, 0x7fffffff, -0x80000000);
-    }
-    this.buffer[offset] = value;
-    this.buffer[offset + 1] = value >>> 8;
-    this.buffer[offset + 2] = value >>> 16;
-    this.buffer[offset + 3] = value >>> 24;
-    return offset + 4;
-  }
-
-  legacyWriteInt32BE(value, offset, noAssert) {
-    value = +value;
-    offset = offset >>> 0;
-    if (!noAssert) {
-      checkInt(this.buffer, value, offset, 4, 0x7fffffff, -0x80000000);
-    }
-    this.buffer[offset] = value >>> 24;
-    this.buffer[offset + 1] = value >>> 16;
-    this.buffer[offset + 2] = value >>> 8;
-    this.buffer[offset + 3] = value;
-    return offset + 4;
-  }
-// END NODE 8 LEGACY BUFFER FUNCTIONS
-
   writeUInt8(value, _offset) {
-    return this.legacyWriteUInt8(value, _offset != null ? _offset : this.offset++, this.noAssert);
+    return this.buffer.writeUInt8(value, _offset != null ? _offset : this.offset++);
   }
 
   writeInt8(value, _offset) {
-    return this.legacyWriteInt8(value, _offset != null ? _offset : this.offset++, this.noAssert);
+    return this.buffer.writeInt8(value, _offset != null ? _offset : this.offset++);
   }
 
   writeUInt16(value, _offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyWriteUInt16BE(value, offset, noAssert);
+    const bigFunction = (offset) => {
+      return this.buffer.writeUInt16BE(value, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyWriteUInt16LE(value, offset, noAssert);
+    const littleFunction = (offset) => {
+      return this.buffer.writeUInt16LE(value, offset);
     };
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   writeInt16(value, _offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyWriteInt16BE(value, offset, noAssert);
+    const bigFunction = (offset) => {
+      return this.buffer.writeInt16BE(value, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyWriteInt16LE(value, offset, noAssert);
+    const littleFunction = (offset) => {
+      return this.buffer.writeInt16LE(value, offset);
     };
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   writeUInt32(value, _offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyWriteUInt32BE(value, offset, noAssert);
+    const bigFunction = (offset) => {
+      return this.buffer.writeUInt32BE(value, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyWriteUInt32LE(value, offset, noAssert);
+    const littleFunction = (offset) => {
+      return this.buffer.writeUInt32LE(value, offset);
     };
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
 
   writeInt32(value, _offset) {
-    const bigFunction = (offset, noAssert) => {
-      return this.legacyWriteInt32BE(value, offset, noAssert);
+    const bigFunction = (offset) => {
+      return this.buffer.writeInt32BE(value, offset);
     };
-    const littleFunction = (offset, noAssert) => {
-      return this.legacyWriteInt32LE(value, offset, noAssert);
+    const littleFunction = (offset) => {
+      return this.buffer.writeInt32LE(value, offset);
     };
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
@@ -209,10 +70,11 @@ class CleverBufferWriter extends CleverBuffer {
     const offset = _offset != null ? _offset : this.offset;
     // ref treats leading zeros as denoting octal numbers, so we want to strip
     // them out to prevent this behaviour
-    if (typeof value === 'number') {
+    if (typeof value === 'number' || typeof value === 'bigint') {
       value = value.toString();
     }
-    if (!this.noAssert && !/^\d+$/.test(value)) {
+    // console.log(`hello: ${value}`);
+    if (!/^\d+$/.test(value)) {
       throw new RangeError('"value" argument is out of bounds');
     }
     value = value.replace(/^0+(\d)/, '$1');
@@ -226,10 +88,10 @@ class CleverBufferWriter extends CleverBuffer {
 
   writeInt64(value, _offset) {
     const offset = _offset != null ? _offset : this.offset;
-    if (typeof value === 'number') {
+    if (typeof value === 'number' || typeof value === 'bigint') {
       value = value.toString();
     }
-    if (!this.noAssert && !/^-?\d+$/.test(value)) {
+    if (!/^-?\d+$/.test(value)) {
       throw new RangeError('"value" argument is out of bounds');
     }
     // ref treats leading zeros as denoting octal numbers, so we want to strip

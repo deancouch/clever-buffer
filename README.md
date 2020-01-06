@@ -34,12 +34,12 @@ _NOTE_: Examples below in coffeescript
 * existingBuffer Buffer
 * options
   * offset Number, Optional, Default: 0
-  * noAssert Boolean, Optional, Default: true
   * bigEndian Boolean, Optional, Default: false
+* ** NOTE: noAssert has been removed **
 
 Allocates a new CleverBufferReader with an internal buffer of the specified existingBuffer
 ``` coffee
-reader = new CleverBufferReader existingBuffer, {offset:0, noAssert: true, bigEndian: false}
+reader = new CleverBufferReader existingBuffer, {offset:0, bigEndian: false}
 ```
 
 #### reader.getUInt8([offset])
@@ -165,12 +165,11 @@ console.log reader.getString(length:5) # "HELLO"
 * existingBuffer Buffer
 * options
   * offset Number, Optional, Default: 0
-  * noAssert Boolean, Optional, Default: true
   * bigEndian Boolean, Optional, Default: false
 
 Allocates a new CleverBufferWriter with an internal buffer of the specified existingBuffer
 ``` coffee
-writer = new CleverBufferWriter existingBuffer, {offset:0, noAssert: true, bigEndian: false}
+writer = new CleverBufferWriter existingBuffer, {offset:0, bigEndian: false}
 ```
 
 #### writer.writeUInt8(value, [offset])
