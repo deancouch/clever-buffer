@@ -1,13 +1,5 @@
-const ref             = require('ref-napi');
-
 const defaults        = require('./defaults');
 const CleverBuffer    = require('./clever-buffer-common');
-
-const checkOffset = (offset, ext, length) => {
-  if ((offset + ext) > length) {
-    throw new RangeError('Index out of range');
-  }
-};
 
 class CleverBufferReader extends CleverBuffer {
 
@@ -81,9 +73,9 @@ class CleverBufferReader extends CleverBuffer {
       throw new RangeError('Index out of range');
     }
     if (this.bigEndian) {
-      val = ref.readUInt64BE(this.buffer, offset);
+      val = this.buffer.readBigUInt64BE(offset);
     } else {
-      val = ref.readUInt64LE(this.buffer, offset);
+      val = this.buffer.readBigUInt64LE(offset);
     }
     if (_offset === undefined) { this.offset += 8; }
     return val.toString();
@@ -96,9 +88,9 @@ class CleverBufferReader extends CleverBuffer {
       throw new RangeError('Index out of range');
     }
     if (this.bigEndian) {
-      val = ref.readInt64BE(this.buffer, offset);
+      val = this.buffer.readBigInt64BE(offset);
     } else {
-      val = ref.readInt64LE(this.buffer, offset);
+      val = this.buffer.readBigInt64LE(offset);
     }
     if (_offset === undefined) { this.offset += 8; }
     return val.toString();

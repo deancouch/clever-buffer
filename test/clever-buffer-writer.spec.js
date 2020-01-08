@@ -268,7 +268,8 @@ describe('CleverBufferWriter', () => {
     cleverBufferWriter.getOffset().should.eql(10);
   });
 
-  it('should write Uint64 little endian MAX', () => {
+
+  it('should write Uint64 little endian MAX when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf);
@@ -278,7 +279,17 @@ describe('CleverBufferWriter', () => {
     ]));
   });
 
-  it('should write Uint64 big endian MAX', () => {
+  it('should write Uint64 little endian MAX when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf);
+    cleverBuffer.writeUInt64(18446744073709551615n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write Uint64 big endian MAX when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
@@ -288,7 +299,17 @@ describe('CleverBufferWriter', () => {
     ]));
   });
 
-  it('should write Uint64 little endian', () => {
+  it('should write Uint64 big endian MAX when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeUInt64(18446744073709551615n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write Uint64 little endian when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf);
@@ -298,7 +319,37 @@ describe('CleverBufferWriter', () => {
     ]));
   });
 
-  it('should write Uint64 big endian', () => {
+  it('should write Uint64 little endian ignoring leading zeros', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: false });
+    cleverBuffer.writeUInt64('00004294967366');
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+    ]));
+  });
+
+  it('should write Uint64 little endian when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf);
+    cleverBuffer.writeUInt64(4294967366n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+    ]));
+  });
+
+  it('should write Uint64 little endian when passed a "number"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf);
+    cleverBuffer.writeUInt64(4294967366);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+    ]));
+  });
+
+  it('should write Uint64 big endian when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
@@ -308,7 +359,37 @@ describe('CleverBufferWriter', () => {
     ]));
   });
 
-  it('should write int64 little endian', () => {
+  it('should write Uint64 big endian ignoring leading zeros', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeUInt64('00004294967366');
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+    ]));
+  });
+
+  it('should write Uint64 big endian when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeUInt64(4294967366n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+    ]));
+  });
+
+  it('should write Uint64 big endian when passed a "number"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeUInt64(4294967366);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+    ]));
+  });
+
+  it('should write int64 little endian when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf);
@@ -318,11 +399,51 @@ describe('CleverBufferWriter', () => {
     ]));
   });
 
-  it('should write int64 big endian', () => {
+  it('should write int64 little endian when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf);
+    cleverBuffer.writeInt64(-1n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write int64 little endian when passed a "number"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf);
+    cleverBuffer.writeInt64(-1);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write int64 big endian when passed a "string"', () => {
     const buf = Buffer.alloc(8);
     buf.fill(0);
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeInt64('-1');
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write int64 big endian when passed a "bigint"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeInt64(-1n);
+    cleverBuffer.getBuffer().should.eql(Buffer.from([
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+    ]));
+  });
+
+  it('should write int64 big endian when passed a "number"', () => {
+    const buf = Buffer.alloc(8);
+    buf.fill(0);
+    const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
+    cleverBuffer.writeInt64(-1);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
     ]));

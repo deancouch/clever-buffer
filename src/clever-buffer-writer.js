@@ -1,16 +1,5 @@
-const ref             = require('ref-napi');
-
 const defaults        = require('./defaults');
 const CleverBuffer    = require('./clever-buffer-common');
-
-const checkInt = (buffer, value, offset, ext, max, min) => {
-  if ((value > max) || (value < min)) {
-    throw new TypeError('"value" argument is out of bounds');
-  }
-  if ((offset + ext) > buffer.length) {
-    throw new RangeError('Index out of range');
-  }
-};
 
 class CleverBufferWriter extends CleverBuffer {
 
@@ -68,40 +57,26 @@ class CleverBufferWriter extends CleverBuffer {
 
   writeUInt64(value, _offset) {
     const offset = _offset != null ? _offset : this.offset;
-    // ref treats leading zeros as denoting octal numbers, so we want to strip
-    // them out to prevent this behaviour
-    if (typeof value === 'number' || typeof value === 'bigint') {
-      value = value.toString();
+    if (typeof value !== 'bigint') {
+      value = BigInt(value);
     }
-    // console.log(`hello: ${value}`);
-    if (!/^\d+$/.test(value)) {
-      throw new RangeError('"value" argument is out of bounds');
-    }
-    value = value.replace(/^0+(\d)/, '$1');
     if (this.bigEndian) {
-      ref.writeUInt64BE(this.buffer, offset, value);
+      this.buffer.writeBigUInt64BE(value, offset);
     } else {
-      ref.writeUInt64LE(this.buffer, offset, value);
+      this.buffer.writeBigUInt64LE(value, offset);
     }
     if (_offset === undefined) { return this.offset += 8; }
   }
 
   writeInt64(value, _offset) {
     const offset = _offset != null ? _offset : this.offset;
-    if (typeof value === 'number' || typeof value === 'bigint') {
-      value = value.toString();
+    if (typeof value !== 'bigint') {
+      value = BigInt(value);
     }
-    if (!/^-?\d+$/.test(value)) {
-      throw new RangeError('"value" argument is out of bounds');
-    }
-    // ref treats leading zeros as denoting octal numbers, so we want to strip
-    // them out to prevent this behaviour.
-    // Also, ref treats '-0123' as a negative octal
-    value = value.replace(/^(-?)0+(\d)/, '$1$2');
     if (this.bigEndian) {
-      ref.writeInt64BE(this.buffer, offset, value);
+      this.buffer.writeBigInt64BE(value, offset);
     } else {
-      ref.writeInt64LE(this.buffer, offset, value);
+      this.buffer.writeBigInt64LE(value, offset);
     }
     if (_offset === undefined) { return this.offset += 8; }
   }
@@ -112,8 +87,7 @@ class CleverBufferWriter extends CleverBuffer {
       length: null,
       offset: this.offset,
       encoding: 'utf-8'
-    }
-    );
+    });
     if (length != null) {
       length = this.buffer.write(value, offset, length, encoding);
     } else {

@@ -14,7 +14,6 @@ CleverBuffer adds functionality that is missing from the node Buffer class
 
 * Keeps track of the offset for you
 * One time specification of endian-ness and whether to assert on buffer length
-* 64 bit integer support. We use [ref](https://github.com/TooTallNate/ref) under the hood for our 64 bit numbers
 
 ## Installation
 ``` coffee
@@ -35,7 +34,6 @@ _NOTE_: Examples below in coffeescript
 * options
   * offset Number, Optional, Default: 0
   * bigEndian Boolean, Optional, Default: false
-* ** NOTE: noAssert has been removed **
 
 Allocates a new CleverBufferReader with an internal buffer of the specified existingBuffer
 ``` coffee
