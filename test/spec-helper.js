@@ -16,7 +16,7 @@ const cartesianProduct = (arg) => {
     const acc_ = [];
     acc.forEach((a) => {
       xs.forEach((x) => {
-        const r = Object.assign({}, a);
+        const r = { ...a };
         r[key] = x;
         acc_.push(r);
       });

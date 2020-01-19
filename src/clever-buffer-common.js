@@ -1,9 +1,7 @@
 const defaults = require('./defaults');
 
 class CleverBuffer {
-
   constructor(buffer, options = {}) {
-
     this._executeAndIncrement = this._executeAndIncrement.bind(this);
     this.getBuffer = this.getBuffer.bind(this);
     this.getOffset = this.getOffset.bind(this);
@@ -15,16 +13,15 @@ class CleverBuffer {
 
     ({ offset: this.offset, bigEndian: this.bigEndian } = defaults(options, {
       offset: 0,
-      bigEndian: false
-    }
-    ));
+      bigEndian: false,
+    }));
   }
 
   _executeAndIncrement(bigEndianFunction, littleEndianFunction, value, _offset) {
     let val;
     if (this.bigEndian) {
       val = bigEndianFunction(_offset != null ? _offset : this.offset);
-    } else {      
+    } else {
       val = littleEndianFunction(_offset != null ? _offset : this.offset);
     }
     if (_offset === undefined) { this.offset += value; }

@@ -1,8 +1,8 @@
-const should   = require('should');
+require('should');
+
 const defaults = require(`${SRC}/defaults`);
 
 describe('defaults', () => {
-
   it('does not override existing properties', () => {
     const obj = { a: 1 };
     const res = defaults(obj, { a: 2 });

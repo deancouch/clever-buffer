@@ -1,23 +1,25 @@
+/* eslint-disable no-shadow */
+require('should');
 const _ = require('lodash');
-const should = require('should');
+
 const CleverBufferWriter = require(`${SRC}/clever-buffer-writer`);
 const {
   writeToStupidBuffer,
-  writeToCleverBuffer
-}  = require('./support/test-helper');
+  writeToCleverBuffer,
+} = require('./support/test-helper');
 const specHelper = require('./spec-helper');
 
 describe('CleverBufferWriter', () => {
-  const powed = v => Math.pow(2, v) - 1;
+  const powed = (v) => 2 ** v - 1;
 
   // generates a unsigned range, e.g [0, 1, 3, 7, 15, 31, 63, 127, 255]
-  const unsignedValues = count => _.map(_.range(0, count+1, 1), powed);
+  const unsignedValues = (count) => _.map(_.range(0, count + 1, 1), powed);
 
   // generates a signed range, e.g [-127, -63, -31, -15, -7, -3, -1, 0, 1, 3, 7, 15, 31, 63, 127]
   const signedValues = (count) => {
     const values = _.map(_.range(0, count, 1), powed);
     // flip the signs, reverse it, remove the extra '0', and concat the orig values
-    return _.concat(_.map(values, v => v * -1).reverse().slice(0,-1), values);
+    return _.concat(_.map(values, (v) => v * -1).reverse().slice(0, -1), values);
   };
 
   it('should write Uint8', () => {
@@ -116,7 +118,7 @@ describe('CleverBufferWriter', () => {
     const cleverBufferWriter = new CleverBufferWriter(buf);
     cleverBufferWriter.writeBytes([0x20, 0x6d, 0x65, 0x20, 0x57, 0x6f, 0x72, 0x72, 0x79, 0x21]);
     cleverBufferWriter.writeBytes([0x20]);
-    cleverBufferWriter.writeBytes([0x57, 0x68, 0x61, 0x74], {offset: 2});
+    cleverBufferWriter.writeBytes([0x57, 0x68, 0x61, 0x74], { offset: 2 });
 
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([0x20, 0x6d, 0x57, 0x68, 0x61, 0x74, 0x72, 0x72, 0x79, 0x21, 0x20]));
   });
@@ -152,8 +154,8 @@ describe('CleverBufferWriter', () => {
     len.should.eql(32);
     cleverBufferWriter.getOffset().should.eql(32);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x45,0x58,0x50,0x45,0x43,0x54,0x45,0x44,0x20,0x52,0x45,0x54,0x55,0x52,0x4e,0x21,
-      0x52,0x45,0x54,0x55,0x52,0x4e,0x20,0x4f,0x46,0x20,0x24,0x32,0x2e,0x30,0x30,0x21
+      0x45, 0x58, 0x50, 0x45, 0x43, 0x54, 0x45, 0x44, 0x20, 0x52, 0x45, 0x54, 0x55, 0x52, 0x4e, 0x21,
+      0x52, 0x45, 0x54, 0x55, 0x52, 0x4e, 0x20, 0x4f, 0x46, 0x20, 0x24, 0x32, 0x2e, 0x30, 0x30, 0x21,
     ]));
   });
 
@@ -161,11 +163,11 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    const len = cleverBufferWriter.writeString('héllo', {encoding: 'utf-8'});
+    const len = cleverBufferWriter.writeString('héllo', { encoding: 'utf-8' });
     len.should.eql(6);
     cleverBufferWriter.getOffset().should.eql(6);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x68, 0xc3, 0xa9, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x00
+      0x68, 0xc3, 0xa9, 0x6c, 0x6c, 0x6f, 0x00, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -174,7 +176,7 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    const len = cleverBufferWriter.writeString('héllo', {encoding: 'utf16le'});
+    const len = cleverBufferWriter.writeString('héllo', { encoding: 'utf16le' });
     len.should.eql(10);
   });
 
@@ -182,12 +184,12 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    const len = cleverBufferWriter.writeString('HELLOWORLD', {length: 5});
-    //Only writes hello
+    const len = cleverBufferWriter.writeString('HELLOWORLD', { length: 5 });
+    // Only writes hello
     len.should.eql(5);
     cleverBufferWriter.getOffset().should.eql(5);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x48, 0x45, 0x4C, 0x4C, 0x4F, 0x00, 0x00, 0x00, 0x00, 0x00
+      0x48, 0x45, 0x4C, 0x4C, 0x4F, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -195,12 +197,12 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    const len = cleverBufferWriter.writeString('héllo', {length: 4});
+    const len = cleverBufferWriter.writeString('héllo', { length: 4 });
     // Only writes hél
     len.should.eql(4);
     cleverBufferWriter.getOffset().should.eql(4);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x68, 0xc3, 0xa9, 0x6c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      0x68, 0xc3, 0xa9, 0x6c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -208,12 +210,12 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    const len = cleverBufferWriter.writeString('éè', {length: 3});
+    const len = cleverBufferWriter.writeString('éè', { length: 3 });
     // Only writes é
     len.should.eql(2);
     cleverBufferWriter.getOffset().should.eql(2);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0xc3, 0xa9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      0xc3, 0xa9, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -221,12 +223,12 @@ describe('CleverBufferWriter', () => {
     const buf = Buffer.alloc(10);
     buf.fill(0);
     const cleverBufferWriter = new CleverBufferWriter(buf);
-    cleverBufferWriter.writeString('HELLO', {offset: 5});
+    cleverBufferWriter.writeString('HELLO', { offset: 5 });
 
-    //Writes hello starting at offset 5
+    // Writes hello starting at offset 5
     cleverBufferWriter.getOffset().should.eql(0);
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x45, 0x4C, 0x4C, 0x4F
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x48, 0x45, 0x4C, 0x4C, 0x4F,
     ]));
   });
 
@@ -241,11 +243,11 @@ describe('CleverBufferWriter', () => {
     cleverBufferWriter.writeUInt8(5);
     cleverBufferWriter.writeUInt8(6, 1);
 
-    //Writes 6 at position 1
+    // Writes 6 at position 1
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x01, 0x06, 0x03, 0x04, 0x05
+      0x01, 0x06, 0x03, 0x04, 0x05,
     ]));
-    //Does not increment the offset
+    // Does not increment the offset
     cleverBufferWriter.getOffset().should.eql(5);
   });
 
@@ -260,14 +262,13 @@ describe('CleverBufferWriter', () => {
     cleverBufferWriter.writeUInt16(5);
     cleverBufferWriter.writeUInt16(6, 2);
 
-    //Writes 6 at position 2
+    // Writes 6 at position 2
     cleverBufferWriter.getBuffer().should.eql(Buffer.from([
-      0x01, 0x00, 0x06, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00
+      0x01, 0x00, 0x06, 0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00,
     ]));
-    //Does not increment the offset
+    // Does not increment the offset
     cleverBufferWriter.getOffset().should.eql(10);
   });
-
 
   it('should write Uint64 little endian MAX when passed a "string"', () => {
     const buf = Buffer.alloc(8);
@@ -275,7 +276,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64('18446744073709551615');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -285,7 +286,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64(18446744073709551615n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -295,7 +296,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64('18446744073709551615');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -305,7 +306,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64(18446744073709551615n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -315,7 +316,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64('4294967366');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -325,7 +326,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: false });
     cleverBuffer.writeUInt64('00004294967366');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -335,7 +336,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64(4294967366n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -345,7 +346,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64(4294967366);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+      0x46, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
     ]));
   });
 
@@ -355,7 +356,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64('4294967366');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46,
     ]));
   });
 
@@ -365,7 +366,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64('00004294967366');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46,
     ]));
   });
 
@@ -375,7 +376,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64(4294967366n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46,
     ]));
   });
 
@@ -385,7 +386,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeUInt64(4294967366);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x46,
     ]));
   });
 
@@ -395,7 +396,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeInt64('-1');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -405,7 +406,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeInt64(-1n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -415,7 +416,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeInt64(-1);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -425,7 +426,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeInt64('-1');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -435,7 +436,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeInt64(-1n);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -445,7 +446,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf, { bigEndian: true });
     cleverBuffer.writeInt64(-1);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
   });
 
@@ -455,7 +456,7 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer = new CleverBufferWriter(buf);
     cleverBuffer.writeUInt64('18446744073709551615', 2);
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+      0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     ]));
     cleverBuffer.getOffset().should.eql(0);
   });
@@ -467,7 +468,7 @@ describe('CleverBufferWriter', () => {
     cleverBuffer.skip(1);
     cleverBuffer.writeUInt64('18446744073709551615');
     cleverBuffer.getBuffer().should.eql(Buffer.from([
-      0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+      0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
     ]));
     cleverBuffer.getOffset().should.eql(9);
   });
@@ -480,9 +481,9 @@ describe('CleverBufferWriter', () => {
   });
 
   describe('leading zeros are handling correctly', () => specHelper.cartesianProduct({
-    size:      [1, 2, 4, 8],
-    unsigned:  [false, true],
-    bigEndian: [false, true]
+    size: [1, 2, 4, 8],
+    unsigned: [false, true],
+    bigEndian: [false, true],
   }).map((testCase) => (({ size, unsigned, bigEndian }) => it(`should correctly handle leading zero for ${JSON.stringify(testCase)}`, () => {
     let f;
     const buf1 = Buffer.alloc(size);
@@ -492,22 +493,22 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian });
 
     if (unsigned) {
-      f = `writeUInt${size*8}`;
-      cleverBuffer1[f]("123");
-      cleverBuffer2[f]("00123");
+      f = `writeUInt${size * 8}`;
+      cleverBuffer1[f]('123');
+      cleverBuffer2[f]('00123');
     } else {
-      f = `writeInt${size*8}`;
-      cleverBuffer1[f]("-123");
-      cleverBuffer2[f]("-00123");
+      f = `writeInt${size * 8}`;
+      cleverBuffer1[f]('-123');
+      cleverBuffer2[f]('-00123');
     }
 
     buf1.should.eql(buf2);
   }))));
 
   describe('check we handle numbers and strings identically', () => specHelper.cartesianProduct({
-    size:      [1, 2, 4, 8],
-    unsigned:  [false, true],
-    bigEndian: [false, true]
+    size: [1, 2, 4, 8],
+    unsigned: [false, true],
+    bigEndian: [false, true],
   }).map((testCase) => (({ size, unsigned, bigEndian }) => it(`should correctly handle numbers and strings for ${JSON.stringify(testCase)}`, () => {
     let f;
     const buf1 = Buffer.alloc(size);
@@ -517,12 +518,12 @@ describe('CleverBufferWriter', () => {
     const cleverBuffer2 = new CleverBufferWriter(buf2, { bigEndian });
 
     if (unsigned) {
-      f = `writeUInt${size*8}`;
-      cleverBuffer1[f]("123");
+      f = `writeUInt${size * 8}`;
+      cleverBuffer1[f]('123');
       cleverBuffer2[f](123);
     } else {
-      f = `writeInt${size*8}`;
-      cleverBuffer1[f]("-123");
+      f = `writeInt${size * 8}`;
+      cleverBuffer1[f]('-123');
       cleverBuffer2[f](-123);
     }
 
@@ -530,21 +531,21 @@ describe('CleverBufferWriter', () => {
   }))));
 
   describe('check only throwing exception for writing negative unsigned integers', () => specHelper.cartesianProduct({
-    size:      [1, 2, 4, 8],
-    bigEndian: [false, true]
+    size: [1, 2, 4, 8],
+    bigEndian: [false, true],
   }).map((testCase) => ({ size, bigEndian }) => {
     it(`should throw for ${JSON.stringify(testCase)}`, () => {
       let error;
       const cleverBuffer = new CleverBufferWriter((Buffer.alloc(size)), { bigEndian });
 
       try {
-        cleverBuffer[`writeUInt${size*8}`]("-1");
+        cleverBuffer[`writeUInt${size * 8}`]('-1');
       } catch (error1) {
         error = error1;
         error.toString().should.match(/TypeError|RangeError/);
       }
       try {
-        cleverBuffer[`writeUInt${size*8}`](-1);
+        cleverBuffer[`writeUInt${size * 8}`](-1);
       } catch (error2) {
         error = error2;
         error.toString().should.match(/TypeError|RangeError/);

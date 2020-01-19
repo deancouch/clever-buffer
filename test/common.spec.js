@@ -1,8 +1,9 @@
-const should = require('should');
+require('should');
+
 const CleverBufferReader = require(`${SRC}/clever-buffer-reader`);
 
 describe('CleverBufferCommon', () => {
-  const buf = Buffer.from([ 0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9 ]);
+  const buf = Buffer.from([0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9]);
 
   it('can slice from the current offset until the end', () => {
     const cleverBuffer = new CleverBufferReader(buf);

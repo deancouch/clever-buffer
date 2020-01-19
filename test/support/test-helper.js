@@ -1,7 +1,7 @@
 const CleverBufferWriter = require(`${SRC}/clever-buffer-writer`);
 
 exports.writeToStupidBuffer = (values, numberOfBytesPerWord, writeFunction) => {
-  const buf = Buffer.alloc(values.length*numberOfBytesPerWord);
+  const buf = Buffer.alloc(values.length * numberOfBytesPerWord);
 
   let offset = 0;
   values.forEach((val) => {
@@ -12,7 +12,7 @@ exports.writeToStupidBuffer = (values, numberOfBytesPerWord, writeFunction) => {
 };
 
 exports.writeToCleverBuffer = (values, numberOfBytesPerWord, bigEndian, writeFunction) => {
-  const cleverBufferWriter = new CleverBufferWriter(Buffer.alloc(values.length*numberOfBytesPerWord), {bigEndian});
+  const cleverBufferWriter = new CleverBufferWriter(Buffer.alloc(values.length * numberOfBytesPerWord), { bigEndian });
 
   values.forEach((val) => {
     writeFunction(cleverBufferWriter, val);

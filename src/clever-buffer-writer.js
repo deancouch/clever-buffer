@@ -1,8 +1,11 @@
-const defaults        = require('./defaults');
-const CleverBuffer    = require('./clever-buffer-common');
+/* eslint-disable prefer-const */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-return-assign */
+/* eslint-disable no-plusplus */
+const defaults = require('./defaults');
+const CleverBuffer = require('./clever-buffer-common');
 
 class CleverBufferWriter extends CleverBuffer {
-
   constructor(buffer, options = {}) {
     super(buffer, options);
   }
@@ -16,42 +19,26 @@ class CleverBufferWriter extends CleverBuffer {
   }
 
   writeUInt16(value, _offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.writeUInt16BE(value, offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.writeUInt16LE(value, offset);
-    };
+    const bigFunction = (offset) => this.buffer.writeUInt16BE(value, offset);
+    const littleFunction = (offset) => this.buffer.writeUInt16LE(value, offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   writeInt16(value, _offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.writeInt16BE(value, offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.writeInt16LE(value, offset);
-    };
+    const bigFunction = (offset) => this.buffer.writeInt16BE(value, offset);
+    const littleFunction = (offset) => this.buffer.writeInt16LE(value, offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   writeUInt32(value, _offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.writeUInt32BE(value, offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.writeUInt32LE(value, offset);
-    };
+    const bigFunction = (offset) => this.buffer.writeUInt32BE(value, offset);
+    const littleFunction = (offset) => this.buffer.writeUInt32LE(value, offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
 
   writeInt32(value, _offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.writeInt32BE(value, offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.writeInt32LE(value, offset);
-    };
+    const bigFunction = (offset) => this.buffer.writeInt32BE(value, offset);
+    const littleFunction = (offset) => this.buffer.writeInt32LE(value, offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
 
@@ -86,7 +73,7 @@ class CleverBufferWriter extends CleverBuffer {
     let { length, offset, encoding } = defaults(options, {
       length: null,
       offset: this.offset,
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     });
     if (length != null) {
       length = this.buffer.write(value, offset, length, encoding);

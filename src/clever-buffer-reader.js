@@ -1,8 +1,9 @@
-const defaults        = require('./defaults');
-const CleverBuffer    = require('./clever-buffer-common');
+/* eslint-disable no-plusplus */
+/* eslint-disable no-param-reassign */
+const defaults = require('./defaults');
+const CleverBuffer = require('./clever-buffer-common');
 
 class CleverBufferReader extends CleverBuffer {
-
   constructor(buffer, options) {
     super(buffer, options);
     this.getUInt8 = this.getUInt8.bind(this);
@@ -27,42 +28,26 @@ class CleverBufferReader extends CleverBuffer {
   }
 
   getUInt16(_offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.readUInt16BE(offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.readUInt16LE(offset);
-    };
+    const bigFunction = (offset) => this.buffer.readUInt16BE(offset);
+    const littleFunction = (offset) => this.buffer.readUInt16LE(offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   getInt16(_offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.readInt16BE(offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.readInt16LE(offset);
-    };
+    const bigFunction = (offset) => this.buffer.readInt16BE(offset);
+    const littleFunction = (offset) => this.buffer.readInt16LE(offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 2, _offset);
   }
 
   getUInt32(_offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.readUInt32BE(offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.readUInt32LE(offset);
-    };
+    const bigFunction = (offset) => this.buffer.readUInt32BE(offset);
+    const littleFunction = (offset) => this.buffer.readUInt32LE(offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
 
   getInt32(_offset) {
-    const bigFunction = (offset) => {
-      return this.buffer.readInt32BE(offset);
-    };
-    const littleFunction = (offset) => {
-      return this.buffer.readInt32LE(offset);
-    };
+    const bigFunction = (offset) => this.buffer.readInt32BE(offset);
+    const littleFunction = (offset) => this.buffer.readInt32LE(offset);
     return this._executeAndIncrement(bigFunction, littleFunction, 4, _offset);
   }
 
@@ -101,9 +86,8 @@ class CleverBufferReader extends CleverBuffer {
     const { length, offset, encoding } = defaults(options, {
       length: 0,
       offset: this.offset,
-      encoding: 'utf-8'
-    }
-    );
+      encoding: 'utf-8',
+    });
     if (length === 0) { return ''; }
     const val = this.buffer.toString(encoding, offset, offset + length);
     if (!offsetSpecified) { this.offset += length; }
@@ -114,9 +98,8 @@ class CleverBufferReader extends CleverBuffer {
     const offsetSpecified = (options.offset != null);
     const { length, offset } = defaults(options, {
       length: 0,
-      offset: this.offset
-    }
-    );
+      offset: this.offset,
+    });
     if (length === 0) { return []; }
     const val = Array.prototype.slice.call(this.buffer, offset, offset + length);
     if (!offsetSpecified) { this.offset += length; }
